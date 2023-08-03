@@ -9,6 +9,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.net.Uri
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import com.udacity.databinding.ActivityMainBinding
@@ -61,5 +62,31 @@ class MainActivity : AppCompatActivity() {
         private const val URL =
             "https://github.com/udacity/nd940-c3-advanced-android-programming-project-starter/archive/master.zip"
         private const val CHANNEL_ID = "channelId"
+    }
+
+    fun onRadioButtonClicked(view: View) {
+//        if (view is RadioButton) {
+//            val isChecked = view.isChecked
+//            when (view.getId()) {
+//                R.id.glide_button ->
+//                    if (isChecked) {
+//                        selectedGitHubRepository = getString(R.string.glideGithubURL)
+//                        selectedGitHubFileName = getString(R.string.glide_text)
+//                    }
+//
+//                R.id.load_app_button ->
+//                    if (isChecked) {
+//                        selectedGitHubRepository = getString(R.string.loadAppGithubURL)
+//                        selectedGitHubFileName = getString(R.string.load_app_text)
+//                    }
+//
+//                R.id.retrofit_button -> {
+//                    if (isChecked) {
+//                        selectedGitHubRepository = getString(R.string.retrofitGithubURL)
+//                        selectedGitHubFileName = getString(R.string.retrofit_text)
+//                    }
+//                }
+//            }
+//        }
     }
 }

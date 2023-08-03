@@ -3,8 +3,11 @@ package com.udacity
 import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
+import androidx.core.content.ContextCompat
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
@@ -27,6 +30,24 @@ class LoadingButton @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+
+        val buttonWidth = width.toFloat()
+        val buttonHeight = height.toFloat()
+
+        //Draw a rectangle as the button background
+        val buttonBackgroundPaint = Paint()
+        buttonBackgroundPaint.color = ContextCompat.getColor(context, R.color.colorPrimary)
+        canvas?.drawRect(0f, 0f, buttonWidth, buttonHeight, buttonBackgroundPaint)
+
+        //Draw text in the center of the button
+        val buttonTextPaint = Paint()
+        buttonTextPaint.color = ContextCompat.getColor(context, R.color.white)
+        buttonTextPaint.textSize = 32f
+        buttonTextPaint.textAlign = Paint.Align.CENTER
+
+        val textX = buttonWidth / 2f
+        val textY = buttonHeight / 2f - (buttonTextPaint.descent() + buttonTextPaint.ascent()) / 2f
+        canvas?.drawText("Download", textX, textY, buttonTextPaint)
 
     }
 
