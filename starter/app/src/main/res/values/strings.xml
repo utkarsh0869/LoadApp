@@ -17,5 +17,5 @@
     <string name="retrofit_text">Retrofit - Type-safe HTTP client for Android and Java by Square, Inc.</string>
 
     <string name="cloud_download_image">Cloud with downward pointed arrow in the center</string>
-
+    <string name="noRepoSelectedText">No Repo Selected</string>
 </resources>
