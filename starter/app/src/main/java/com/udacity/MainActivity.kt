@@ -73,6 +73,7 @@ class MainActivity : AppCompatActivity() {
                                 // Now you can use the status value for further processing
                                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
+                                    loadingButton.resetButtonText()
 //                                notificationManager.sendNotification(selectedGitHubFileName.toString(), applicationContext, "Success")
                                 } else {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
