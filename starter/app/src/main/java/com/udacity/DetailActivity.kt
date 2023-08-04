@@ -1,11 +1,13 @@
 package com.udacity
 
+import android.app.NotificationManager
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import com.udacity.databinding.ActivityDetailBinding
 import org.w3c.dom.Text
 
@@ -25,6 +27,13 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
+
+        // Cancel the notification manually
+        val notificationManager = ContextCompat.getSystemService(
+            applicationContext,
+            NotificationManager::class.java
+        ) as NotificationManager
+        notificationManager.cancelAll()
 
         okButton = findViewById(R.id.ok_button)
         fileNameTextView = findViewById(R.id.file_name)

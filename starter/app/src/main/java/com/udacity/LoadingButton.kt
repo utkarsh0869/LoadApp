@@ -8,53 +8,49 @@ import android.graphics.Paint
 import android.graphics.Rect
 import android.util.AttributeSet
 import android.view.View
-import android.view.animation.AccelerateDecelerateInterpolator
 import androidx.core.content.ContextCompat
 import kotlin.properties.Delegates
 
 class LoadingButton @JvmOverloads constructor(
     context: Context, attrs: AttributeSet? = null, defStyleAttr: Int = 0
 ) : View(context, attrs, defStyleAttr) {
-    private val originalButtonText = "Download"
     private var widthSize = 0
     private var heightSize = 0
 
     private val textRect = Rect()
 
-    private var progress: Float = 0f
+    private var animatedValue: Float = 0f
 
     private var valueAnimator = ValueAnimator()
     private var buttonText: String
-    private var buttonBackgroundColor = R.attr.buttonBackgroundColor
 
     private var loadingButton : LoadingButton = findViewById(R.id.loading_button)
 
     private var buttonState: ButtonState by Delegates.observable<ButtonState>(ButtonState.Completed) { p, old, new ->
         when(new) {
             ButtonState.Loading -> {
-                setText("We are downloading")
-                setBgColor("#004349")
-                valueAnimator = ValueAnimator.ofFloat(0f, 1f).apply {
-                    addUpdateListener {
-                        progress = animatedValue as Float
-                        invalidate()
-                    }
-                    repeatMode = ValueAnimator.REVERSE
-                    repeatCount = ValueAnimator.INFINITE
-                    duration = 3000
-                    start()
-                }
 
+                setButtonText(context.getString(R.string.we_are_downloading_text))
+
+                valueAnimator = ValueAnimator.ofFloat(0f, 1f)
+                valueAnimator.duration = 3000
+                valueAnimator.repeatMode = ValueAnimator.REVERSE
+                valueAnimator.repeatCount = ValueAnimator.INFINITE
+
+                valueAnimator.addUpdateListener { animator ->
+                    animatedValue = animator.animatedValue as Float
+                    invalidate()
+                }
+                valueAnimator.start()
                 disableLoadingButton()
             }
 
             ButtonState.Completed -> {
-                setText("Downloaded")
-                setBgColor("#07C2AA")
+
+                setButtonText(context.getString(R.string.downloaded_text))
                 valueAnimator.cancel()
-                resetProgress()
+                resetAnimatedValue()
                 enableLoadingButton()
-//                resetButtonText()
             }
 
             ButtonState.Clicked -> {
@@ -64,7 +60,7 @@ class LoadingButton @JvmOverloads constructor(
     }
 
     fun resetButtonText() {
-        buttonText = originalButtonText
+        buttonText = context.getString(R.string.original_text)
         invalidate()
         requestLayout()
     }
@@ -83,8 +79,7 @@ class LoadingButton @JvmOverloads constructor(
             0, 0).apply {
 
             try {
-                buttonText = originalButtonText
-                buttonBackgroundColor = ContextCompat.getColor(context, R.color.colorPrimary)
+                buttonText = context.getString(R.string.original_text)
             } finally {
                 recycle()
             }
@@ -95,30 +90,24 @@ class LoadingButton @JvmOverloads constructor(
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
 
-        val cornerRadius = 10.0f
         val backgroundWidth = measuredWidth.toFloat()
         val backgroundHeight = measuredHeight.toFloat()
 
-        canvas?.drawColor(buttonBackgroundColor)
         paint.getTextBounds(buttonText, 0, buttonText.length, textRect)
-        canvas?.drawRoundRect(0f, 0f, backgroundWidth, backgroundHeight, cornerRadius, cornerRadius, backgroundPaint)
+        canvas?.drawRect(0f, 0f, backgroundWidth, backgroundHeight, backgroundPaint)
 
         if (buttonState == ButtonState.Loading) {
-            var progressVal = progress * measuredWidth.toFloat()
-            canvas?.drawRoundRect(0f, 0f, progressVal, backgroundHeight, cornerRadius, cornerRadius, inProgressBackgroundPaint)
+            var progressVal = animatedValue * measuredWidth.toFloat()
+            canvas?.drawRect(0f, 0f, progressVal, backgroundHeight, inProgressBackgroundPaint)
 
-            val arcDiameter = cornerRadius * 2
-            val arcRectSize = measuredHeight.toFloat() - paddingBottom.toFloat() - arcDiameter
+            // Calculate the position to draw the circle on the right side of the button
+            val circleRadius = measuredHeight.toFloat() / 4
+            val circleX = measuredWidth.toFloat() - circleRadius * 2
+            val circleY = measuredHeight.toFloat() / 2
 
-            progressVal = progress * 360f
-            canvas?.drawArc(paddingStart + arcDiameter,
-                paddingTop.toFloat() + arcDiameter,
-                arcRectSize,
-                arcRectSize,
-                0f,
-                progressVal,
-                true,
-                inProgressArcPaint)
+            canvas?.drawArc(circleX - circleRadius, circleY - circleRadius,
+                circleX + circleRadius, circleY + circleRadius,
+                0f, progressVal, true, inProgressArcPaint)
         }
         val centerX = measuredWidth.toFloat() / 2
         val centerY = measuredHeight.toFloat() / 2 - textRect.centerY()
@@ -144,14 +133,8 @@ class LoadingButton @JvmOverloads constructor(
         setMeasuredDimension(w, h)
     }
 
-    private fun setText(buttonText: String) {
+    private fun setButtonText(buttonText: String) {
         this.buttonText = buttonText
-        invalidate()
-        requestLayout()
-    }
-
-    private fun setBgColor(backgroundColor: String) {
-        buttonBackgroundColor = Color.parseColor(backgroundColor)
         invalidate()
         requestLayout()
     }
@@ -164,8 +147,8 @@ class LoadingButton @JvmOverloads constructor(
         loadingButton.isEnabled = false
     }
 
-    private fun resetProgress() {
-        progress = 0f
+    private fun resetAnimatedValue() {
+        animatedValue = 0f
     }
     private fun enableLoadingButton() {
         loadingButton.isEnabled = true

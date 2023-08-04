@@ -3,7 +3,6 @@ package com.udacity
 import android.app.DownloadManager
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -19,15 +18,12 @@ import android.view.View
 import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
-import com.example.loadapp.sendNotification
 import com.udacity.databinding.ActivityMainBinding
 import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
-    //    private lateinit var selectedGitHubRepository: String
     private var selectedGitHubFileName: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var loadingButton: LoadingButton
@@ -35,8 +31,6 @@ class MainActivity : AppCompatActivity() {
     private var downloadID: Long = 0
 
     private lateinit var notificationManager: NotificationManager
-    private lateinit var pendingIntent: PendingIntent
-    private lateinit var action: NotificationCompat.Action
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +40,6 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-//        showToast(getString(R.string.noRepoSelectedText))
         loadingButton = findViewById(R.id.loading_button)
         loadingButton.setOnClickListener {
             Log.d("MainActivity", "loading button clicked")
@@ -64,28 +57,36 @@ class MainActivity : AppCompatActivity() {
                 if (action.equals(DownloadManager.ACTION_DOWNLOAD_COMPLETE)) {
                     val query = DownloadManager.Query()
                     query.setFilterById(intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, 0))
-                    val manager = context!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                    val manager =
+                        context!!.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
                     val cursor: Cursor = manager.query(query)
                     if (cursor.moveToFirst()) {
                         if (cursor.count > 0) {
-                            val statusColumnIndex = cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
+                            val statusColumnIndex =
+                                cursor.getColumnIndex(DownloadManager.COLUMN_STATUS)
 
                             // Check if the column exists in the Cursor
                             if (statusColumnIndex != -1) {
                                 val status = cursor.getInt(statusColumnIndex)
-                                // Now you can use the status value for further processing
                                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
                                     loadingButton.resetButtonText()
-                                    notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Success")
+                                    notificationManager.sendNotification(
+                                        selectedGitHubFileName,
+                                        applicationContext,
+                                        "Success"
+                                    )
                                     Log.d("MainActivity", "here")
                                 } else {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
-                                    notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Failed")
+                                    notificationManager.sendNotification(
+                                        selectedGitHubFileName,
+                                        applicationContext,
+                                        "Failed"
+                                    )
                                     Log.d("MainActivity", "here2")
                                 }
                             } else {
-                                // Handle the case when the column is not found in the Cursor
                             }
                         }
                     }
@@ -98,10 +99,13 @@ class MainActivity : AppCompatActivity() {
 
         loadingButton.setLoadingButtonState(ButtonState.Clicked)
 
-        if(selectedGitHubFileName != null) {
+        if (selectedGitHubFileName != null) {
             loadingButton.setLoadingButtonState(ButtonState.Loading)
 
-            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            notificationManager = ContextCompat.getSystemService(
+                applicationContext,
+                NotificationManager::class.java
+            ) as NotificationManager
             createChannel("channelId", "Repo")
 
             var file = File(getExternalFilesDir(null), "/repos")
@@ -117,16 +121,17 @@ class MainActivity : AppCompatActivity() {
                     .setRequiresCharging(false)
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true)
-                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/repos/repository.zip")
+                    .setDestinationInExternalPublicDir(
+                        Environment.DIRECTORY_DOWNLOADS,
+                        "/repos/repository.zip"
+                    )
 
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
-                downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+                downloadManager.enqueue(request)
             Log.d("MainActivity", downloadID.toString())
         } else {
-//            loadingButton.setLoadingButtonState(ButtonState.Completed)
-//            Log.d("MainActivity", "Toast?")
             Toast.makeText(this, "No repo selected", Toast.LENGTH_SHORT).show()
         }
     }
@@ -137,7 +142,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun createChannel(channelId: String, channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
+            val notificationChannel =
+                NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)
@@ -160,19 +166,16 @@ class MainActivity : AppCompatActivity() {
             when (view.getId()) {
                 R.id.glide_button ->
                     if (isChecked) {
-//                        selectedGitHubRepository = getString(R.string.glideGithubURL)
                         selectedGitHubFileName = getString(R.string.glide_text)
                     }
 
                 R.id.load_app_button ->
                     if (isChecked) {
-//                        selectedGitHubRepository = getString(R.string.loadAppGithubURL)
                         selectedGitHubFileName = getString(R.string.load_app_text)
                     }
 
                 R.id.retrofit_button -> {
                     if (isChecked) {
-//                        selectedGitHubRepository = getString(R.string.retrofitGithubURL)
                         selectedGitHubFileName = getString(R.string.retrofit_text)
                     }
                 }
