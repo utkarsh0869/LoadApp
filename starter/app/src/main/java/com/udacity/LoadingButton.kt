@@ -41,7 +41,7 @@ class LoadingButton @JvmOverloads constructor(
                     }
                     repeatMode = ValueAnimator.REVERSE
                     repeatCount = ValueAnimator.INFINITE
-                    duration = 1000
+                    duration = 3000
                     start()
                 }
 
