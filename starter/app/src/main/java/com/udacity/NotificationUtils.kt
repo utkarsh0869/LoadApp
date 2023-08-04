@@ -19,7 +19,7 @@ private const val FLAGS = 0
  * @param context, activity context.
  */
 // May need to pass notification Id as a arg here.
-fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context, status: String) {
+fun NotificationManager.sendNotification(messageBody: String?, applicationContext: Context, status: String) {
 
 
     val contentIntent = Intent(applicationContext, DetailActivity::class.java)
@@ -39,6 +39,10 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setContentText(messageBody)
         .setContentIntent(contentPendingIntent)
         .setAutoCancel(true)
+        .addAction(R.drawable.ic_assistant_black_24dp,
+            applicationContext.getString(R.string.notification_button),
+            contentPendingIntent
+        )
 
 
     notify(NOTIFICATION_ID, builder.build())

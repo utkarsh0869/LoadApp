@@ -39,8 +39,8 @@ class LoadingButton @JvmOverloads constructor(
                         progress = animatedValue as Float
                         invalidate()
                     }
-//                    repeatMode = ValueAnimator.RESTART
-//                    repeatCount = ValueAnimator.
+                    repeatMode = ValueAnimator.REVERSE
+                    repeatCount = ValueAnimator.INFINITE
                     duration = 1000
                     start()
                 }

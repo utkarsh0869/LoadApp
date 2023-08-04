@@ -27,8 +27,8 @@ import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
-//    private lateinit var selectedGitHubRepository: String
-    private lateinit var selectedGitHubFileName: String
+    //    private lateinit var selectedGitHubRepository: String
+    private var selectedGitHubFileName: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var loadingButton: LoadingButton
 
@@ -46,10 +46,7 @@ class MainActivity : AppCompatActivity() {
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
 
-        notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-        createChannel("channelId", "Repo")
-
-        showToast(getString(R.string.noRepoSelectedText))
+//        showToast(getString(R.string.noRepoSelectedText))
         loadingButton = findViewById(R.id.loading_button)
         loadingButton.setOnClickListener {
             Log.d("MainActivity", "loading button clicked")
@@ -104,6 +101,9 @@ class MainActivity : AppCompatActivity() {
         if(selectedGitHubFileName != null) {
             loadingButton.setLoadingButtonState(ButtonState.Loading)
 
+            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+            createChannel("channelId", "Repo")
+
             var file = File(getExternalFilesDir(null), "/repos")
 
             if (!file.exists()) {
@@ -125,9 +125,9 @@ class MainActivity : AppCompatActivity() {
                 downloadManager.enqueue(request)// enqueue puts the download request in the queue.
             Log.d("MainActivity", downloadID.toString())
         } else {
-            loadingButton.setLoadingButtonState(ButtonState.Completed)
-            Log.d("MainActivity", "Toast?")
-
+//            loadingButton.setLoadingButtonState(ButtonState.Completed)
+//            Log.d("MainActivity", "Toast?")
+            Toast.makeText(this, "No repo selected", Toast.LENGTH_SHORT).show()
         }
     }
 
