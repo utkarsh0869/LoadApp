@@ -20,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
+import com.example.loadapp.sendNotification
 import com.udacity.databinding.ActivityMainBinding
 import java.io.File
 
@@ -43,6 +44,9 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(binding.toolbar)
 
         registerReceiver(receiver, IntentFilter(DownloadManager.ACTION_DOWNLOAD_COMPLETE))
+
+        notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
+        createChannel("channelId", "Repo")
 
         showToast(getString(R.string.noRepoSelectedText))
         loadingButton = findViewById(R.id.loading_button)
@@ -74,10 +78,10 @@ class MainActivity : AppCompatActivity() {
                                 if (status == DownloadManager.STATUS_SUCCESSFUL) {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
                                     loadingButton.resetButtonText()
-//                                notificationManager.sendNotification(selectedGitHubFileName.toString(), applicationContext, "Success")
+                                    notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Success")
                                 } else {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
-//                                notificationManager.sendNotification(selectedGitHubFileName.toString(), applicationContext, "Failed")
+                                    notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Failed")
                                 }
                             } else {
                                 // Handle the case when the column is not found in the Cursor
@@ -96,8 +100,7 @@ class MainActivity : AppCompatActivity() {
         if(selectedGitHubFileName != null) {
             loadingButton.setLoadingButtonState(ButtonState.Loading)
 
-            notificationManager = ContextCompat.getSystemService(applicationContext, NotificationManager::class.java) as NotificationManager
-            createChannel(CHANNEL_ID, "Repo")
+
 
             var file = File(getExternalFilesDir(null), "/repos")
 
@@ -124,7 +127,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showToast(text: String) {
-        Toast.makeText(this, text, Toast.LENGTH_LONG).show()
+        Toast.makeText(this, text, Toast.LENGTH_SHORT).show()
     }
 
     private fun createChannel(channelId: String, channelName: String) {
