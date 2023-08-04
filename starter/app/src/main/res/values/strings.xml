@@ -18,4 +18,7 @@
 
     <string name="cloud_download_image">Cloud with downward pointed arrow in the center</string>
     <string name="noRepoSelectedText">No Repo Selected</string>
+    <string name="file_name">File name:</string>
+    <string name="status">Status</string>
+    <string name="ok">OK</string>
 </resources>

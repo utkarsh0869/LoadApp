@@ -104,8 +104,6 @@ class MainActivity : AppCompatActivity() {
         if(selectedGitHubFileName != null) {
             loadingButton.setLoadingButtonState(ButtonState.Loading)
 
-
-
             var file = File(getExternalFilesDir(null), "/repos")
 
             if (!file.exists()) {

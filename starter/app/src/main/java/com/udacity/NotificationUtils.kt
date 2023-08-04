@@ -21,6 +21,14 @@ private const val FLAGS = 0
 // May need to pass notification Id as a arg here.
 fun NotificationManager.sendNotification(messageBody: String, applicationContext: Context, status: String) {
 
+
+    val contentIntent = Intent(applicationContext, DetailActivity::class.java)
+    contentIntent.apply {
+        putExtra("fileName", messageBody)
+        putExtra("status", status)
+    }
+
+    val contentPendingIntent = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID, contentIntent, PendingIntent.FLAG_MUTABLE)
     val builder = NotificationCompat.Builder(
         applicationContext,
         "channelId"
@@ -29,27 +37,11 @@ fun NotificationManager.sendNotification(messageBody: String, applicationContext
         .setContentTitle(applicationContext
             .getString(R.string.notification_title))
         .setContentText(messageBody)
+        .setContentIntent(contentPendingIntent)
+        .setAutoCancel(true)
 
 
     notify(NOTIFICATION_ID, builder.build())
-    Log.d("NotificationUtil", "notification?")
+    Log.d("NotificationUtil", "$messageBody $status")
 
-//    val contentIntent = Intent(applicationContext, DetailActivity::class.java)
-//    contentIntent.apply {
-//        putExtra("fileName", messageBody)
-//        putExtra("status", status)
-//    }
-
-//    val contentPendingIntent = PendingIntent.getActivity(applicationContext, NOTIFICATION_ID, contentIntent, PendingIntent.FLAG_UPDATE_CURRENT)
-//    val action = NotificationCompat.Action.Builder(0,"Show Details",contentPendingIntent).build()
-//    val notificationBuilder = NotificationCompat.Builder(applicationContext, "channelId")
-//        .setSmallIcon(R.drawable.ic_assistant_black_24dp)
-//        .setContentTitle("Download Complete")
-//        .setContentText(messageBody)
-//        .setContentIntent(contentPendingIntent)
-//        .setAutoCancel(true)
-//        .setPriority(NotificationCompat.PRIORITY_HIGH)
-//        .addAction(action)
-//
-//    notify(NOTIFICATION_ID, notificationBuilder.build())
 }
