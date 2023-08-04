@@ -13,6 +13,7 @@ import android.graphics.Color
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.util.Log
 import android.view.View
 import android.widget.RadioButton
@@ -59,6 +60,7 @@ class MainActivity : AppCompatActivity() {
     private val receiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context?, intent: Intent) {
             val id = intent.getLongExtra(DownloadManager.EXTRA_DOWNLOAD_ID, -1)
+            Log.d("MainActivity", id.toString())
             val action = intent.action
             Log.d("MainActivity", "inside receiver's onreceive")
             if (downloadID == id) {
@@ -79,9 +81,11 @@ class MainActivity : AppCompatActivity() {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
                                     loadingButton.resetButtonText()
                                     notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Success")
+                                    Log.d("MainActivity", "here")
                                 } else {
                                     loadingButton.setLoadingButtonState(ButtonState.Completed)
                                     notificationManager.sendNotification(selectedGitHubFileName, applicationContext, "Failed")
+                                    Log.d("MainActivity", "here2")
                                 }
                             } else {
                                 // Handle the case when the column is not found in the Cursor
@@ -115,10 +119,13 @@ class MainActivity : AppCompatActivity() {
                     .setRequiresCharging(false)
                     .setAllowedOverMetered(true)
                     .setAllowedOverRoaming(true)
+                    .setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, "/repos/repository.zip")
+
 
             val downloadManager = getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             downloadID =
                 downloadManager.enqueue(request)// enqueue puts the download request in the queue.
+            Log.d("MainActivity", downloadID.toString())
         } else {
             loadingButton.setLoadingButtonState(ButtonState.Completed)
             Log.d("MainActivity", "Toast?")
@@ -132,7 +139,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun createChannel(channelId: String, channelName: String) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            val notificationChannel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_LOW)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = Color.RED
             notificationChannel.enableVibration(true)
